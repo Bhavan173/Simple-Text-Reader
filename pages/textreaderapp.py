@@ -11,6 +11,10 @@ if "gomain" not in st.session_state:
 
 
 async def speech(text,voice):
+    unwanted_symbols = "*"
+    text.encode('ascii', 'ignore').decode('ascii')
+    text = text.translate(str.maketrans('', '', unwanted_symbols))
+
     output = "Test.mp3"
     audio_buffer = BytesIO()
 
@@ -57,6 +61,5 @@ else:
             placeholder="Once upon a time..", 
             key="form_text_input"
         )
-        default_index = voices.index("en-US-AvaNeural")
         st.selectbox("Voices",voices,key = "voice")
         st.form_submit_button("Submit", on_click=handle_submit)
