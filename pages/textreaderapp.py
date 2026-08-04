@@ -11,8 +11,8 @@ if "gomain" not in st.session_state:
 
 
 async def speech(text,voice):
-    unwanted_symbols = "*"
-    text.encode('ascii', 'ignore').decode('ascii')
+    unwanted_symbols = "***>"
+    text = text.encode('ascii', 'ignore').decode('ascii')
     text = text.translate(str.maketrans('', '', unwanted_symbols))
 
     output = "Test.mp3"
