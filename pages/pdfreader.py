@@ -3,7 +3,7 @@ import fitz
 import edge_tts
 from io import BytesIO
 import asyncio
-
+import VoicesGenerator
 
 st.title("Text Assistant")
 st.header("Effortless text to speech")
@@ -13,23 +13,7 @@ st.subheader("Listen to your PDFs")
 if "gomain" not in st.session_state:
     st.session_state.gomain = True
 
-    
-async def speech(text,voice):
-    unwanted_symbols = "***>"
-    text = text.encode('ascii', 'ignore').decode('ascii')
-    text = text.translate(str.maketrans('', '', unwanted_symbols))
 
-    # output = "Test.mp3"
-    audio_buffer = BytesIO()
-
-    print(f"Generating speech with {voice}")
-    comm = edge_tts.Communicate(text,voice = voice)
-    # await(comm.save(output))
-    async for chunk in comm.stream():
-        if chunk["type"] == "audio":
-            audio_buffer.write(chunk['data'])
-    audio_buffer.seek(0)
-    return audio_buffer
 
 
 def upload():
@@ -45,7 +29,7 @@ def upload():
     st.session_state.pdfdata = text
 
     with st.spinner("Generating Speech..."):
-        st.session_state.audio = asyncio.run(speech(st.session_state.pdfdata,st.session_state.voice))
+        st.session_state.audio = asyncio.run(VoicesGenerator.speech(st.session_state.pdfdata,st.session_state.voice))
 
 def goback():
     st.session_state.gomain = True
@@ -53,15 +37,16 @@ def goback():
 
 
 if st.session_state.gomain:
-    async def voices():
-            voices = await edge_tts.list_voices()
-            listvoices = [v['ShortName'] for v in voices if v['Locale'].startswith("en-")]
-            return listvoices
-    voices = asyncio.run(voices())
+
+    voices = ['William', 'Neerja', 'Ava', 'Christopher', 'Maisie']
     
     with st.form(key = "Filedata"):
         st.file_uploader("Upload Pdf file with text...",key="file",type=["pdf"])
-        st.selectbox("Select Voice",voices,key = "voice")
+        cols = st.columns(2)
+        with cols[0]:
+            st.selectbox("Select service",['Text To Speech','AI Summary'])
+        with cols[1]:
+            st.selectbox("Voices",voices,key = "voice")
         st.form_submit_button("Upload",on_click=upload)
 
 else:
