@@ -3,6 +3,8 @@ import asyncio
 import edge_tts
 from io import BytesIO
 import VoicesGenerator
+import AIhelper
+
 
 if "text" not in st.session_state:
     st.session_state.text = ""
@@ -15,10 +17,16 @@ def handle_submit():
     if not st.session_state.form_text_input:
         st.warning("Enter text!")
         return
-    st.session_state.text = st.session_state.form_text_input
+    if st.session_state.service == 'AI Summary':
+        st.session_state.text = AIhelper.resp(st.session_state.form_text_input)
+    else:
+        st.session_state.text = st.session_state.form_text_input
+
+        
     with st.spinner("Please wait..."):
         st.session_state.buffer = asyncio.run(VoicesGenerator.speech(st.session_state.text.strip(),st.session_state.voice))
     st.session_state.gomain = False
+    
 
 def go_back():
     st.session_state.gomain = True
@@ -30,22 +38,22 @@ st.header("Effortless text to speech")
 
 if not st.session_state.gomain:
     with st.container(border=True):
-        st.write(st.session_state.text)
         st.audio(st.session_state.buffer.read(),format="audio/mp3")
+        st.write(st.session_state.text)
         st.button("Back", on_click=go_back)
 
 else:  
     voices = ['William', 'Neerja', 'Ava', 'Christopher', 'Maisie']
     with st.form(key="textdata"):
       
-        st.text_input(
+        st.text_area(
             "Paste Text below", 
             placeholder="Once upon a time..", 
             key="form_text_input"
         )
         cols = st.columns(2)
         with cols[0]:
-            st.selectbox("Select service",['Text to Speech','AI Summary'])
+            st.selectbox("Select service",['Text to Speech','AI Summary'],key = "service")
         with cols[1]:
             st.selectbox("Voices",voices,key = "voice")
         st.form_submit_button("Submit", on_click=handle_submit)
