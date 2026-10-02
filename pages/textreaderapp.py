@@ -32,18 +32,18 @@ def go_back():
     st.session_state.gomain = True
     st.session_state.text = "" 
 
-st.title("Text Assistant")
+st.title("EchoRead")
 st.header("Effortless text to speech")
 
 
 if not st.session_state.gomain:
+    st.audio(st.session_state.buffer.read(),format="audio/mp3")
     with st.container(border=True):
-        st.audio(st.session_state.buffer.read(),format="audio/mp3")
         st.write(st.session_state.text)
         st.button("Back", on_click=go_back)
 
 else:  
-    voices = ['William', 'Neerja', 'Ava', 'Christopher', 'Maisie']
+    voices = ['William', 'Neerja', 'Ava', 'Christopher', 'Michelle']
     with st.form(key="textdata"):
       
         st.text_area(

@@ -38,7 +38,7 @@ def goback():
 
 if st.session_state.gomain:
 
-    voices = ['William', 'Neerja', 'Ava', 'Christopher', 'Maisie']
+    voices = ['William', 'Neerja', 'Ava', 'Christopher', 'Michelle']
     
     with st.form(key = "Filedata"):
         st.file_uploader("Upload Pdf file with text...",key="file",type=["pdf"])
